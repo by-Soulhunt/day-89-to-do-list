@@ -1,3 +1,5 @@
+from importlib import reload
+
 from flask_bootstrap import Bootstrap5
 from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
@@ -91,12 +93,41 @@ def show_item(item_id):
     :return: template item.html
     """
     current_item = ToDo.query.get_or_404(item_id)
+
+    # Change Finish data block regarding status
     finish_date = False
     if current_item.finish_date:
         finish_date = True
 
-
     return render_template("item.html", item=current_item, finish=finish_date)
+
+
+@app.route("/delete", methods=["POST"])
+def delete_item():
+    item_id = request.form.get("item_id")
+    current_item = ToDo.query.get_or_404(item_id)
+    if current_item:
+        db.session.delete(current_item)
+        db.session.commit()
+
+    return redirect(url_for("index"))
+
+
+@app.route("/finish_item", methods=["POST"])
+def finish_item():
+    item_id = request.form.get("item_id")
+    current_item = ToDo.query.get_or_404(item_id)
+    current_item.status = "Finish"
+    db.session.commit()
+
+    return redirect(url_for('show_item', item_id=item_id))
+
+
+@app.route("/edit_item/<int:item_id>", methods=["POST"])
+def edit_item(item_id):
+    item_id = request.form.get("item_id")
+    return redirect(url_for("index"))
+
 
 
 if __name__ == "__main__":

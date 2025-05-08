@@ -40,12 +40,27 @@
                         <tr>
                       </tbody>
                     </table>
-                      <a type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-success ms-1">Finished</a>
-                      <a type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-warning">Edit</a>
-                      <hr>
-                      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-danger me-md-2">Delete</a>
+                      <div class="d-grid gap-2 d-md-flex">
+                          <form method="post" action="{{ url_for('finish_item') }}">
+                              <input type="hidden" name="item_id" value="{{ item.id }}">
+                              <button type="submit" value="finished" data-mdb-button-init data-mdb-ripple-init class="btn btn-success ms-1">Finished</button>
+                          </form>
+                           <form method="post" action="{{ url_for('edit_item', item_id=item.id) }}">
+                               <button type="submit" value="edit" data-mdb-button-init data-mdb-ripple-init class="btn btn-warning">Edit</button>
+                           </form>
                       </div>
+                          <hr>
+                          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                              <form method="post" action="{{ url_for('delete_item') }}">
+                                  <input type="hidden" name="item_id" value="{{ item.id }}">
+                                  <button type="submit"
+                                    data-mdb-button-init data-mdb-ripple-init
+                                    class="btn btn-danger me-md-2">
+                                Delete
+                            </button>
+                              </form>
+                          </div>
+
                       <hr>
                       <a data-mdb-button-init data-mdb-ripple-init class="btn btn-primary" href="{{ url_for('index') }}" >
                           Back home
