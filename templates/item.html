@@ -3,9 +3,8 @@
         <!-- Page content-->
         <div class="container">
             <div class="text-center mt-5">
-                <h1>A Bootstrap 5 Starter Template</h1>
-                <p class="lead">A complete project boilerplate built with Bootstrap</p>
-                <p>Bootstrap v5.2.3</p>
+                <h1>{{ item.item }}</h1>
+                <p class="lead">Full information about todo # {{ item.id }}</p>
             </div>
           <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
@@ -15,42 +14,42 @@
                     <table class="table mb-4">
                       <thead>
                         <tr>
-                          <th scope="col">No.</th>
-                          <th scope="col">Todo item</th>
-                          <th scope="col">Status</th>
-                          <th scope="col">Actions</th>
+                          <th scope="col" colspan="2">Information</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
-                          <th scope="row">1</th>
-                          <td>Buy groceries for next week</td>
-                          <td>In progress</td>
-                          <td>
-                            <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-success ms-1">Open</button>
-                          </td>
-                        </tr>
+                          <th scope="row">Status</th>
+                          <td>{{ item.status }}</td>
                         <tr>
-                          <th scope="row">2</th>
-                          <td>Renew car insurance</td>
-                          <td>In progress</td>
-                          <td>
-                            <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-danger">Delete</button>
-                            <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-success ms-1">Finished</button>
-                          </td>
-                        </tr>
                         <tr>
-                          <th scope="row">3</th>
-                          <td>Sign up for online course</td>
-                          <td>In progress</td>
-                          <td>
-                            <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-danger">Delete</button>
-                            <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-success ms-1">Finished</button>
-                          </td>
-                        </tr>
+                          <th scope="row">Full Description</th>
+                          <td>{{ item.description }}</td>
+                        <tr>
+                        <tr>
+                          <th scope="row">Creation data</th>
+                          <td>{{ item.creation_date }}</td>
+                        <tr>
+                        <tr>
+                          <th scope="row">Finish data</th>
+                            {% if finish: %}
+                                <td>{{ item.finish_date }}</td>
+                            {%else%}
+                                <td>Not ready</td>
+                            {% endif %}
+                        <tr>
                       </tbody>
                     </table>
-
+                      <a type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-success ms-1">Finished</a>
+                      <a type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-warning">Edit</a>
+                      <hr>
+                      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-danger me-md-2">Delete</a>
+                      </div>
+                      <hr>
+                      <a data-mdb-button-init data-mdb-ripple-init class="btn btn-primary" href="{{ url_for('index') }}" >
+                          Back home
+                      </a>
                   </div>
                 </div>
               </div>

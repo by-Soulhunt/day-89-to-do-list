@@ -60,7 +60,6 @@ class AddToDoForm(FlaskForm):
 def index():
     items = db.session.execute(db.Select(ToDo))
     all_items = items.scalars().all()
-    print(all_items)
 
     return render_template("index.html", items=all_items)
 
@@ -83,6 +82,21 @@ def add_new_todo():
         return redirect(url_for('index'))
 
     return render_template("add.html", form=form)
+
+@app.route("/item/<int:item_id>", methods=["GET", "POST"])
+def show_item(item_id):
+    """
+    Show current To-Do item
+    :param item_id: id of current item
+    :return: template item.html
+    """
+    current_item = ToDo.query.get_or_404(item_id)
+    finish_date = False
+    if current_item.finish_date:
+        finish_date = True
+
+
+    return render_template("item.html", item=current_item, finish=finish_date)
 
 
 if __name__ == "__main__":

@@ -38,7 +38,10 @@
                           <td>{{ item.status }}</td>
                           <td>{{ item.creation_date }}</td>
                           <td>
-                            <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-success ms-1">Open</button>
+                            <a data-mdb-button-init data-mdb-ripple-init class="btn btn-success ms-1"
+                            href="{{ url_for('show_item', item_id=item.id) }}">
+                                Open
+                            </a>
                           </td>
                         </tr>
                       {% endfor %}
