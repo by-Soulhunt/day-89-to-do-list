@@ -4,11 +4,11 @@ from flask_bootstrap import Bootstrap5
 from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import  DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Boolean, Date
+from sqlalchemy import Integer, String, Boolean, Date, DateTime
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, IntegerField, FloatField, TextAreaField, DateField
 from wtforms.validators import DataRequired,  Length, URL
-from datetime import date
+from datetime import date, datetime
 import os
 
 
@@ -34,8 +34,8 @@ class ToDo(db.Model):
     item: Mapped[str] = mapped_column(String(250), unique=True, nullable=False)
     description: Mapped[str] = mapped_column(String(500), nullable=False)
     status: Mapped[str] = mapped_column(String(250), nullable=False)
-    creation_date: Mapped[date] = mapped_column(Date, nullable=False)
-    finish_date: Mapped[date] = mapped_column(Date, nullable=True)
+    creation_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    finish_date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
 
 with app.app_context():
@@ -75,7 +75,7 @@ def add_new_todo():
         item = request.form.get("item"),
         description = request.form.get("description"),
         status = request.form.get("status"),
-        creation_date = date.today()
+        creation_date = datetime.now().replace(microsecond=0)
         )
 
         db.session.add(new_to_do)
@@ -118,6 +118,7 @@ def finish_item():
     item_id = request.form.get("item_id")
     current_item = ToDo.query.get_or_404(item_id)
     current_item.status = "Finish"
+    current_item.finish_date = datetime.now().replace(microsecond=0)
     db.session.commit()
 
     return redirect(url_for('show_item', item_id=item_id))
