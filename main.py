@@ -1,14 +1,12 @@
-from importlib import reload
-
 from flask_bootstrap import Bootstrap5
 from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import  DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Boolean, Date, DateTime
+from sqlalchemy import Integer, String, DateTime
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, IntegerField, FloatField, TextAreaField, DateField
-from wtforms.validators import DataRequired,  Length, URL
-from datetime import date, datetime
+from wtforms import StringField, SubmitField, SelectField,  TextAreaField
+from wtforms.validators import DataRequired,  Length
+from datetime import datetime
 import os
 
 
@@ -104,6 +102,10 @@ def show_item(item_id):
 
 @app.route("/delete", methods=["POST"])
 def delete_item():
+    """
+    Delete current item
+    :return: redirect to index
+    """
     item_id = request.form.get("item_id")
     current_item = ToDo.query.get_or_404(item_id)
     if current_item:
@@ -113,10 +115,18 @@ def delete_item():
     return redirect(url_for("index"))
 
 
-@app.route("/finish_item", methods=["POST"])
+@app.route("/finish_item", methods=["GET"])
 def finish_item():
-    item_id = request.form.get("item_id")
+    """
+    Change item status to Finish
+    :return: refresh current page
+    """
+    # Take current item ID
+    item_id = request.args.get("item_id")
+    print(item_id)
     current_item = ToDo.query.get_or_404(item_id)
+
+    # Change object status and save into database
     current_item.status = "Finish"
     current_item.finish_date = datetime.now().replace(microsecond=0)
     db.session.commit()
@@ -124,10 +134,25 @@ def finish_item():
     return redirect(url_for('show_item', item_id=item_id))
 
 
-@app.route("/edit_item/<int:item_id>", methods=["POST"])
+@app.route("/edit_item/<int:item_id>", methods=["GET","POST"])
 def edit_item(item_id):
-    item_id = request.form.get("item_id")
-    return redirect(url_for("index"))
+    # Find current item
+    current_item = ToDo.query.get_or_404(item_id)
+    # Create edit form based on add form and show current item information
+    edit_form = AddToDoForm(obj=current_item)
+
+
+    if edit_form.validate_on_submit():
+        # Update the fields
+        current_item.item = edit_form.item.data
+        current_item.description = edit_form.description.data
+        current_item.status = edit_form.status.data
+
+        db.session.commit()
+
+        return render_template("item.html", item=current_item)
+
+    return render_template("add.html", edit=True, form=edit_form)
 
 
 
