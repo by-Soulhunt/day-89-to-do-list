@@ -48,7 +48,6 @@ class AddToDoForm(FlaskForm):
         "Status",
         choices=[("New", "New"),
                  ("In Progress", "In Progress"),
-                 ("Done", "Done"),
                  ("Canceled", "Canceled"),
                  ]
     )
@@ -60,6 +59,7 @@ class AddToDoForm(FlaskForm):
 def index():
     items = db.session.execute(db.Select(ToDo))
     all_items = items.scalars().all()
+    all_items.reverse() # Reverse list to show new items first
 
     return render_template("index.html", items=all_items)
 
@@ -100,13 +100,13 @@ def show_item(item_id):
     return render_template("item.html", item=current_item, finish=finish_date)
 
 
-@app.route("/delete", methods=["POST"])
+@app.route("/delete", methods=["GET"])
 def delete_item():
     """
     Delete current item
     :return: redirect to index
     """
-    item_id = request.form.get("item_id")
+    item_id = request.args.get("item_id")
     current_item = ToDo.query.get_or_404(item_id)
     if current_item:
         db.session.delete(current_item)
@@ -141,7 +141,6 @@ def edit_item(item_id):
     # Create edit form based on add form and show current item information
     edit_form = AddToDoForm(obj=current_item)
 
-
     if edit_form.validate_on_submit():
         # Update the fields
         current_item.item = edit_form.item.data
@@ -150,7 +149,7 @@ def edit_item(item_id):
 
         db.session.commit()
 
-        return render_template("item.html", item=current_item)
+        return redirect(url_for('show_item', item_id=current_item.id))
 
     return render_template("add.html", edit=True, form=edit_form)
 

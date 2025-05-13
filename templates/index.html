@@ -25,7 +25,7 @@
                           <th scope="col">No.</th>
                           <th scope="col">Todo item</th>
                           <th scope="col">Status</th>
-                           <th scope="col">Data</th>
+                           <th scope="col">Creation date</th>
                           <th scope="col">Actions</th>
                         </tr>
                       </thead>
@@ -34,7 +34,17 @@
                         <tr>
                           <th scope="row">{{ item.id }}</th>
                           <td>{{ item.item }}</td>
-                          <td>{{ item.status }}</td>
+                          <td>
+                            <span class="
+                                {% if item.status == 'New' %} text-warning
+                                {% elif item.status == 'In Progress' %} text-primary
+                                {% elif item.status == 'Finish' %} text-success
+                                {% elif item.status == 'Canceled' %} text-danger
+                                {% else %} text-body {% endif %}
+                              ">
+                                {{ item.status }}
+                            </span>
+                          </td>
                           <td>{{ item.creation_date }}</td>
                           <td>
                             <a data-mdb-button-init data-mdb-ripple-init class="btn btn-success ms-1"

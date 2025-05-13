@@ -20,7 +20,17 @@
                       <tbody>
                         <tr>
                           <th scope="row">Status</th>
-                          <td>{{ item.status }}</td>
+                          <td>
+                            <span class="
+                                {% if item.status == 'New' %} text-warning
+                                {% elif item.status == 'In Progress' %} text-primary
+                                {% elif item.status == 'Finish' %} text-success
+                                {% elif item.status == 'Canceled' %} text-danger
+                                {% else %} text-body {% endif %}
+                              ">
+                                {{ item.status }}
+                            </span>
+                          </td>
                         <tr>
                         <tr>
                           <th scope="row">Full Description</th>
@@ -41,23 +51,20 @@
                       </tbody>
                     </table>
                       <div class="d-grid gap-2 d-md-flex">
+                          {% if not finish %}
                           <a href="{{ url_for('finish_item', item_id=item.id) }}"  class="btn btn-success ms-1">
                               Finished
                           </a>
-                               <a href="{{ url_for('edit_item', item_id=item.id) }}" class="btn btn-warning">
-                                  Edit
-                               </a>
+                           <a href="{{ url_for('edit_item', item_id=item.id) }}" class="btn btn-warning">
+                              Edit
+                           </a>
+                          {% endif %}
                       </div>
                           <hr>
                           <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                              <form method="post" action="{{ url_for('delete_item') }}">
-                                  <input type="hidden" name="item_id" value="{{ item.id }}">
-                                  <button type="submit"
-                                    data-mdb-button-init data-mdb-ripple-init
-                                    class="btn btn-danger me-md-2">
+                              <a href="{{ url_for('delete_item', item_id=item.id ) }}" class="btn btn-danger me-md-2">
                                 Delete
-                            </button>
-                              </form>
+                              </a>
                           </div>
 
                       <hr>
