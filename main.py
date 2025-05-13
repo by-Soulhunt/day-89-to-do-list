@@ -21,6 +21,7 @@ class Base(DeclarativeBase):
     """Declarative class"""
     pass
 
+
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo.db"
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
@@ -42,6 +43,9 @@ with app.app_context():
 
 # Forms initialization
 class AddToDoForm(FlaskForm):
+    """
+    Form to Add and Edit task
+    """
     item = StringField("Item Description", validators=[DataRequired(), Length(min=1, max=250)])
     description = TextAreaField("Full description", validators=[DataRequired(), Length(min=1, max=1000)])
     status = SelectField(
@@ -57,6 +61,10 @@ class AddToDoForm(FlaskForm):
 # Routs
 @app.route("/")
 def index():
+    """
+    Main page, show all To-Dos
+    :return: index.html
+    """
     items = db.session.execute(db.Select(ToDo))
     all_items = items.scalars().all()
     all_items.reverse() # Reverse list to show new items first
@@ -66,6 +74,10 @@ def index():
 
 @app.route("/add", methods=["GET", "POST"])
 def add_new_todo():
+    """
+    Add new To-Do and save into database
+    :return:  redirect into index.html after add new To-Do
+    """
     form = AddToDoForm()
 
     if form.validate_on_submit():
@@ -83,6 +95,7 @@ def add_new_todo():
 
     return render_template("add.html", form=form)
 
+
 @app.route("/item/<int:item_id>", methods=["GET", "POST"])
 def show_item(item_id):
     """
@@ -92,7 +105,7 @@ def show_item(item_id):
     """
     current_item = ToDo.query.get_or_404(item_id)
 
-    # Change Finish data block regarding status
+    # Check finish date to hide Edit/Finish buttons and show Finish data
     finish_date = False
     if current_item.finish_date:
         finish_date = True
@@ -123,10 +136,9 @@ def finish_item():
     """
     # Take current item ID
     item_id = request.args.get("item_id")
-    print(item_id)
     current_item = ToDo.query.get_or_404(item_id)
 
-    # Change object status and save into database
+    # Change object status, create finish datetime and save into database
     current_item.status = "Finish"
     current_item.finish_date = datetime.now().replace(microsecond=0)
     db.session.commit()
@@ -136,6 +148,11 @@ def finish_item():
 
 @app.route("/edit_item/<int:item_id>", methods=["GET","POST"])
 def edit_item(item_id):
+    """
+    Edit current item
+    :param item_id: id of current item
+    :return: add.html with data from current item and redirect to current item after saving
+    """
     # Find current item
     current_item = ToDo.query.get_or_404(item_id)
     # Create edit form based on add form and show current item information
